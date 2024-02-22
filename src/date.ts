@@ -11,15 +11,15 @@ export class DateTime {
     ) {}
 
     static now() {
-        return DateTime.fromJsDate(new Date())
+        return DateTime.fromJsDate(new Date());
     }
 
-    static fromObject({ day, month, year }: { day: number, month: number, year: number }) {
-        return DateTime.fromJsDate(new Date(year, month, day))
+    static fromObject({ year, month, day, hours = 0, minutes = 0, seconds = 0 }: { year: number, month: number, day: number, hours?: number, minutes?: number, seconds?: number }) {
+        return new DateTime(year, month, day, hours, minutes, seconds);
     }
 
     static fromISO(iso: string) {
-        return DateTime.fromJsDate(new Date(iso))
+        return DateTime.fromJsDate(new Date(iso));
     }
 
     static fromJsDate(date: Date) {
@@ -101,26 +101,85 @@ export class DateTime {
         return this._seconds;
     }
 
+    static daysInMonth(month: number, year: number): number {
+        return new Date(year, month, 0).getDate();
+    }
+
+    private normalizeDate(years: number, months: number, days: number, hours: number, minutes: number, seconds: number): [number, number, number, number, number, number] {
+        let totalSeconds = seconds;
+        let totalMinutes = minutes;
+        let totalHours = hours;
+        let totalDays = days;
+        let totalMonths = months;
+        let totalYears = years;
+
+        if (totalSeconds < 0) {
+            totalMinutes -= 1;
+            totalSeconds += 60;
+        }
+        if (totalMinutes < 0) {
+            totalHours -= 1;
+            totalMinutes += 60;
+        }
+        if (totalHours < 0) {
+            totalDays -= 1;
+            totalHours += 24;
+        }
+
+        while (totalDays <= 0) {
+            totalMonths -= 1;
+            if (totalMonths < 1) {
+                totalYears -= 1;
+                totalMonths += 12;
+            }
+            const daysInPreviousMonth = DateTime.daysInMonth(totalMonths, totalYears);
+            totalDays += daysInPreviousMonth;
+        }
+
+        while (totalMonths < 1) {
+            totalYears -= 1;
+            totalMonths += 12;
+        }
+        if (totalSeconds >= 60) {
+            totalMinutes += Math.floor(totalSeconds / 60);
+            totalSeconds %= 60;
+        }
+        if (totalMinutes >= 60) {
+            totalHours += Math.floor(totalMinutes / 60);
+            totalMinutes %= 60;
+        }
+        if (totalHours >= 24) {
+            totalDays += Math.floor(totalHours / 24);
+            totalHours %= 24;
+        }
+
+        return [totalYears, totalMonths, totalDays, totalHours, totalMinutes, totalSeconds];
+    }
+
     minus(values: OperationDate = {}) {
         const { years = 0, months = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } = values;
-        this._year -= years;
-        this._month -= months;
-        this._day -= days;
-        this._hours -= hours;
-        this._minutes -= minutes;
-        this._seconds -= seconds;
+        const [totalYears, totalMonths, totalDays, totalHours, totalMinutes, totalSeconds] = this.normalizeDate(this._year - years, this._month - months, this._day - days, this._hours - hours, this._minutes - minutes, this._seconds - seconds);
+
+        this._year = totalYears;
+        this._month = totalMonths;
+        this._day = totalDays;
+        this._hours = totalHours;
+        this._minutes = totalMinutes;
+        this._seconds = totalSeconds;
 
         return this;
     }
 
     plus(values: OperationDate = {}) {
         const { years = 0, months = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } = values;
-        this._year += years;
-        this._month += months;
-        this._day += days;
-        this._hours += hours;
-        this._minutes += minutes;
-        this._seconds += seconds;
+        const [totalYears, totalMonths, totalDays, totalHours, totalMinutes, totalSeconds] = this.normalizeDate(this._year + years, this._month + months, this._day + days, this._hours + hours, this._minutes + minutes, this._seconds + seconds);
+
+        this._year = totalYears;
+        this._month = totalMonths;
+        this._day = totalDays;
+        this._hours = totalHours;
+        this._minutes = totalMinutes;
+        this._seconds = totalSeconds;
 
         return this;
     }

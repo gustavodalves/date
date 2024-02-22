@@ -4,6 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "@types/jest": "^29.5.12",
+    "ts-node": "^10.9.2",
     "tsc": "^2.0.4",
     "tsx": "^4.7.1"
   }

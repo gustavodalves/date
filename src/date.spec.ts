@@ -73,6 +73,7 @@ describe('DateTime', () => {
     const dateTime2 = DateTime.fromObject({ year: 2024, month: 2, day: 22 });
     const dateTime3 = DateTime.fromObject({ year: 2023, month: 2, day: 22 });
     expect(dateTime1.isInSameDate(dateTime2, dateTime3)).toBe(false);
-    expect(dateTime1.isInSameDate(dateTime3)).toBe(true);
+    expect(dateTime1.isInSameDate(dateTime3)).toBe(false);
+    expect(dateTime1.isInSameDate(dateTime2)).toBe(true);
   });
 });

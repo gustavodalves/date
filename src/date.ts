@@ -68,12 +68,12 @@ export class DateTime {
 
     isInSameDate(...dates: DateTime[]) {
         if (!dates.length) return false;
-        const lastDate = dates.pop()!;
+
         return dates.every(date => {
             return (
-                date.year === lastDate.year &&
-                date.month === lastDate.month &&
-                date.day === lastDate.day
+                date.year === this.year &&
+                date.month === this.month &&
+                date.day === this.day
             );
         });
     }

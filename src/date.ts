@@ -66,16 +66,18 @@ export class DateTime {
             .replace('ss', this._seconds.toString().padStart(2, '0'));
     }
 
-    isInSameDate(...dates: DateTime[]) {
+    isInSameDate(date: DateTime) {
+        return (
+            date.year === this.year &&
+            date.month === this.month &&
+            date.day === this.day
+        )
+    }
+
+    isInSameDates(...dates: DateTime[]) {
         if (!dates.length) return false;
 
-        return dates.every(date => {
-            return (
-                date.year === this.year &&
-                date.month === this.month &&
-                date.day === this.day
-            );
-        });
+        return dates.every((date) => this.isInSameDate(date));
     }
 
     get year() {

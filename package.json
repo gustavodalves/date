@@ -1,0 +1,10 @@
+{
+  "name": "date",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "tsc": "^2.0.4",
+    "tsx": "^4.7.1"
+  }
+}
